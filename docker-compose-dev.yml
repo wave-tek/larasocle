@@ -70,9 +70,9 @@ services:
     container_name: larasocle_node
     working_dir: /var/www/html
     volumes:
-      - ./src:/var/www/html
+      - ./laravel-app:/var/www/html
     networks:
-      - larasocle_network
+      - app-network
     command: ["tail", "-f", "/dev/null"]
 
   redis:

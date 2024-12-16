@@ -65,6 +65,16 @@ services:
     networks:
       - app-network
 
+  nodejs:
+    image: node:18
+    container_name: larasocle_node
+    working_dir: /var/www/html
+    volumes:
+      - ./laravel-app:/var/www/html
+    networks:
+      - app-network
+    command: ["tail", "-f", "/dev/null"]
+
   redis:
     image: redis:alpine
     container_name: redis_${APP_ENV}
@@ -72,20 +82,11 @@ services:
       - "${REDIS_PORT:-6379}:6379"
     networks:
       - app-network
-  
-  nodejs:
-    image: node:18
-    container_name: larasocle_node
-    working_dir: /var/www/html
-    volumes:
-      - ./src:/var/www/html
-    networks:
-      - larasocle_network
-    command: ["tail", "-f", "/dev/null"]
 
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog_${APP_ENV}
+    platform: linux/amd64
     ports:
       - "${MAIL_PORT:-1025}:1025"
       - "${MAIL_WEB_PORT:-8025}:8025" # Accès à l'interface web sur localhost:8025
