@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+
+  app: # Service PHP-FPM
+    build: .  # Utilise le Dockerfile pour PHP-FPM
+    container_name: larasocle_app_${APP_ENV}
+    volumes:
+      - ./laravel-app:/var/www/html  # Monte ton code source Laravel
+      - ./.env:/var/www/html/.env
+    working_dir: /var/www/html  # Répertoire de travail dans le conteneur  
+    depends_on:
+      - db
+    env_file:
+      - ./laravel-app/.env        
+    networks:
+      - app-network
+
+  # NGINX pour servir Laravel
+  webserver: # Service NGINX
+    image: nginx:${NGINX_VERSION:-1.17}
+    container_name: larasocle_nginx_${APP_ENV}
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-80}:80"  # Expose NGINX sur le port 8088
+    depends_on:
+      - app  # NGINX dépend de PHP-FPM
+    volumes:
+      - ./laravel-app:/var/www/html  # Monte le projet Laravel
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf  # Monte le fichier de config NGINX
+    networks:
+      - app-network
+  
+  db:
+    image: postgres:latest
+    container_name: larasocle_db_${APP_ENV}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: laravel
+      POSTGRES_USER: laravel
+      POSTGRES_PASSWORD: secret      
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    networks:
+      - app-network
+
+  #pgadmin
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_${APP_ENV}
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "True"
+    links:
+      - db
+    restart: always
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json  # Monte le fichier servers.json
+    depends_on:
+      - db
+    ports:
+      - "${PGADMIN_PORT:-80}:80"
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    container_name: redis_${APP_ENV}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - app-network
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog_${APP_ENV}
+    ports:
+      - "${MAIL_PORT:-1025}:1025"
+      - "${MAIL_WEB_PORT:-8025}:8025" # Accès à l'interface web sur localhost:8025
+    networks:
+      - app-network      
+
+networks:
+    app-network:
+        driver: bridge
+volumes:
+  db_data:
