@@ -9,5 +9,5 @@ sleep 5
 
 # Démarrer Docker Compose
 echo "Démarrage des conteneurs Docker..."
-docker-compose down
-docker-compose up -d
+docker compose down
+docker compose up -d
