@@ -11,3 +11,9 @@ sleep 5
 echo "Démarrage des conteneurs Docker..."
 docker compose down
 docker compose up -d
+
+docker exec -it larasocle_node bash
+npm install -g yarn
+
+docker exec -it larasocle_node npm install
+docker exec -it larasocle_node npm run dev

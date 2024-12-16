@@ -72,6 +72,16 @@ services:
       - "${REDIS_PORT:-6379}:6379"
     networks:
       - app-network
+  
+  nodejs:
+    image: node:18
+    container_name: larasocle_node
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - larasocle_network
+    command: ["tail", "-f", "/dev/null"]
 
   mailhog:
     image: mailhog/mailhog
