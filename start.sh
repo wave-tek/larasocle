@@ -12,8 +12,5 @@ echo "Démarrage des conteneurs Docker..."
 docker compose down
 docker compose up -d
 
-cd laravel-app
-npm install -g yarn
-composer install
-npm install
-npm run dev
+docker exec -it larasocle_node npm install
+docker exec -it larasocle_node npm run dev
