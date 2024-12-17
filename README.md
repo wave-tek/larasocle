@@ -14,26 +14,18 @@ Assurez-vous d'avoir les logiciels suivants installés sur votre machine :
 
 Suivez ces étapes pour déployer le projet sur votre machine :
 
-### Étape 1 : Configuration des variables d'environnement 
-
-Copier le contenu du fichier .env.dev vers le fichier .env à la racine  :
-
-```bash
-cp .env.dev .env
-```
-Copier le contenu du fichier docker-compose-dev.yml vers le fichier docker-compose.yml à la racine  :
-
-```bash
-cp docker-compose-dev.yml docker-compose.yml
-```
-NB : -Si vous êtes en prod, il faut utiliser les fichier de la version prod (docker-compose-prod.yml, .env.prod ...)
-
-### Étape 2 : Installation de laravel et  démarrage des conteneurs Docker en arrière-plan 
+### Étape 1 : Installation de laravel et  démarrage des conteneurs Docker en arrière-plan 
 
 Exécutez la commande suivante pour commencer :
 
+Si environnement de développement :
 ```bash
-bash start.sh
+bash start.sh dev
 ```
 
-NB : -Si vous rencontrez des problèmes de port avec PostgreSQL ou autre conteneur , modifiez les ports ou fermez l'application qui utilise le port en conflit.
+Si environnement de production :
+```bash
+bash start.sh prod
+```
+
+NB : -Si vous rencontrez des problèmes de port avec PostgreSQL ou un autre conteneur, vous pouvez soit modifier les ports dans le fichier .env à la racine, soit fermer l’application qui utilise le port en conflit.
